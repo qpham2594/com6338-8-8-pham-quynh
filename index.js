@@ -1,9 +1,19 @@
 // Your code here
+// all variables needed, moved most variables out as global variables
 
 var weatherSearch = document.getElementById('weather')
 var lineBreak = document.createElement('br')
+var cityAndCountry = document.createElement('h2')
+var coordinateLink = document.createElement('a');
+var weatherImg = document.createElement('img')
+var condition = document.createElement('p')
+var current = document.createElement('p')
+var feelsLike = document.createElement('p')
+var updatedTime = document.createElement('p')
 
-
+// preventDefault and fetch the API
+// attempted error code = 404 in the locationData at first but was not passing the test even though it does work on the App
+// then removed the error code method to .catch instead
 var weatherForm = document.querySelector('form');
 weatherForm.onsubmit = function(e) {
     e.preventDefault()
@@ -27,42 +37,37 @@ weatherForm.onsubmit = function(e) {
         });
 }
 
-
+// function to display data on DOM
 function locationData(weather) {
         console.log(weather)
-        weatherForm.search.value = ''
         weatherSearch.innerHTML = ''
+        weatherForm.search.value = ''
+        // reset after each submission
+        // without the ? after sys, there was a TypeError message in console?
 
-        var cityAndCountry = document.createElement('h2')
         cityAndCountry.innerHTML = weather.name + ", " + weather.sys?.country ;
         console.log(cityAndCountry)
         weatherSearch.appendChild(cityAndCountry)
 
-        var coordinateLink = document.createElement('a');
+       //attempted to create one variable with both lat and lon and combined everything in <a href > with "target_BLANK" inside but did not pass test
+       //then split everything up and set attribute separately
         var latitude = weather.coord?.lat;
         var longitude = weather.coord?.lon;
         coordinateLink.textContent = "Click to view map";
         coordinateLink.href = 'https://www.google.com/maps/search/?api=1&query=' + latitude + ',' + longitude;
         coordinateLink.setAttribute('target', '_blank');
         weatherSearch.appendChild(coordinateLink)
-      
-        var weatherAppImg = document.createElement('img')
-        var weatherImgUrls = {
-            Thunderstorm: 'https://openweathermap.org/img/wn/11d@2x.png',
-            Drizzle: 'https://openweathermap.org/img/wn/09d@2x.png',
-            Rain: 'https://openweathermap.org/img/wn/09d@2x.png',
-            Snow: 'https://openweathermap.org/img/wn/13d@2x.png',
-            Clear: 'https://openweathermap.org/img/wn/01d@2x.png',
-            Clouds: 'https://openweathermap.org/img/wn/02d@2x.png',
-        }
-        if (weather.weather[0].main in weatherImgUrls) {
-            weatherAppImg.src = weatherImgUrls[weather.weather[0].main];
-        }
-        weatherAppImg.innerHTML = ''
+        
+      // initially used icons URLs, set an array, then use if statement to detect key words in weather.main[0]
+      // the above way worked, but did not pass the last test - possibly due to all the URL links
+      // split everything up and combined with weatherImg.src instead 
+        var weatherImgCode = weather.weather[0].icon
+        var weatherImgLink = 'https://openweathermap.org/img/wn/'
+        weatherImg.src = weatherImgLink + weatherImgCode + '@2x.png'
         weatherSearch.appendChild(lineBreak)
-        weatherSearch.appendChild(weatherAppImg)
+        weatherSearch.appendChild(weatherImg)
 
-        var condition = document.createElement('p')
+    // split the word into array to capitalize the first letter and lowercase letters for the rest, then rejoin 
         condition.innerHTML = weather.weather[0].description
         .split(' ') // Split the description into an array of words
         .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()) // Capitalize the first letter and lowercase the rest
@@ -71,17 +76,17 @@ function locationData(weather) {
 
         weatherSearch.appendChild(lineBreak)
 
-        var current = document.createElement('p')
+        
         current.innerHTML = "Current: " + weather.main?.temp + " °F";
         weatherSearch.appendChild(current)
 
-        var feelsLike = document.createElement('p')
+       
         feelsLike.innerHTML = "Feels Like: " + weather.main?.feels_like + " °F";
         weatherSearch.appendChild(feelsLike)
 
         weatherSearch.appendChild(lineBreak)
 
-        var updatedTime = document.createElement('p')
+        // Using the instruction and example from the page
         var milliseconds = weather.dt * 1000;
         var date = new Date(milliseconds); // Create a new Date object with the current time
         var timeString = date.toLocaleTimeString('en-US', {
@@ -91,6 +96,5 @@ function locationData(weather) {
 
         updatedTime.innerHTML = "Last Updated: " + timeString;
         weatherSearch.appendChild(updatedTime)
-
 }
 
