@@ -53,7 +53,7 @@ function locationData(weather) {
        //then split everything up and set attribute separately
         var latitude = weather.coord?.lat;
         var longitude = weather.coord?.lon;
-        coordinateLink.textContent = "Click to view map";
+        coordinateLink.innerHTML = "Click to view map";
         coordinateLink.href = 'https://www.google.com/maps/search/?api=1&query=' + latitude + ',' + longitude;
         coordinateLink.setAttribute('target', '_blank');
         weatherSearch.appendChild(coordinateLink)
